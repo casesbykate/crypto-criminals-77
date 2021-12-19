@@ -1,11 +1,13 @@
 pragma solidity ^0.5.6;
 
-import "./klaytn-contracts/token/KIP17/KIP17Full.sol";
-import "./klaytn-contracts/token/KIP17/KIP17Mintable.sol";
-import "./klaytn-contracts/token/KIP17/KIP17Pausable.sol";
+import "./klaytn-contracts/token/KIP37/KIP37.sol";
+import "./klaytn-contracts/token/KIP37/KIP37Mintable.sol";
+import "./klaytn-contracts/token/KIP37/KIP37Pausable.sol";
 import "./klaytn-contracts/ownership/Ownable.sol";
 
-contract CryptoCriminals77 is Ownable, KIP17Full("77 Crypto Criminals", "CC"), KIP17Mintable, KIP17Pausable {
+contract CryptoCriminals77 is Ownable, KIP37, KIP37Mintable, KIP37Pausable {
+
+    constructor() public KIP37("https://api.casesbykate.xyz/77cryptocriminals/{id}") {}
 
     event SetBaseURI(string baseURI);
 
@@ -16,9 +18,9 @@ contract CryptoCriminals77 is Ownable, KIP17Full("77 Crypto Criminals", "CC"), K
         emit SetBaseURI(_baseURI);
     }
 
-    function tokenURI(uint256 tokenId) public view returns (string memory) {
-        require(_exists(tokenId), "KIP17Metadata: URI query for nonexistent token");
-        
+    function uri(uint256 _tokenId) external view returns (string memory) {
+        uint256 tokenId = _tokenId;
+
         if (tokenId == 0) {
             return string(abi.encodePacked(baseURI, "0"));
         }
@@ -40,9 +42,5 @@ contract CryptoCriminals77 is Ownable, KIP17Full("77 Crypto Criminals", "CC"), K
         idstr = string(buffer);
 
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, idstr)) : "";
-    }
-
-    function exists(uint256 tokenId) external view returns (bool) {
-        return _exists(tokenId);
     }
 }

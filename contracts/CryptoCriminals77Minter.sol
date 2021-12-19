@@ -1,5 +1,6 @@
 pragma solidity ^0.5.6;
 
+import "./klaytn-contracts/token/KIP17/KIP17Full.sol";
 import "./klaytn-contracts/ownership/Ownable.sol";
 import "./interfaces/IMix.sol";
 import "./CryptoCriminals77.sol";
@@ -7,6 +8,8 @@ import "./CryptoCriminals77.sol";
 contract CryptoCriminals77Minter is Ownable {
 
     CryptoCriminals77 public nft;
+    KIP17Full public cbk;
+
     IMix public mix;
     address public signer;
     uint256 public tryPrice = 1 * 1e18;
@@ -15,8 +18,9 @@ contract CryptoCriminals77Minter is Ownable {
     mapping(uint256 => bool) public usedCases;
     mapping(string => address) public triedKeys;
 
-    constructor(CryptoCriminals77 _nft, IMix _mix, address _signer) public {
+    constructor(CryptoCriminals77 _nft, KIP17Full _cbk, IMix _mix, address _signer) public {
         nft = _nft;
+        cbk = _cbk;
         mix = _mix;
         signer = _signer;
     }
@@ -29,14 +33,18 @@ contract CryptoCriminals77Minter is Ownable {
         tryPrice = _price;
     }
 
-    function tryMint(string calldata key) external {
+    function tryMint(string memory key, uint256[] memory _cases) public {
+        require(_cases.length == 7);
+        for (uint256 i = 0; i < 7; i += 1) {
+            require(usedCases[_cases[i]] != true);
+            require(cbk.ownerOf(_cases[i]) == msg.sender);
+        }
         triedKeys[key] = msg.sender;
         mix.burnFrom(msg.sender, tryPrice);
     }
 
     function mint(address to, uint256 id, uint256[] memory _cases, string memory key, bytes memory signature) public {
 
-        require(!nft.exists(id));
         require(_cases.length == 7);
         require(triedKeys[key] == to);
 
@@ -72,9 +80,10 @@ contract CryptoCriminals77Minter is Ownable {
 
         for (uint256 i = 0; i < 7; i += 1) {
             require(usedCases[_cases[i]] != true);
+            require(cbk.ownerOf(_cases[i]) == to);
             usedCases[_cases[i]] = true;
         }
 
-        nft.mint(to, id);
+        nft.mint(id, to, 1);
     }
 }

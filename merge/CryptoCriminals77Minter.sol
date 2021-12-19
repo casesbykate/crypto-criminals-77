@@ -2,80 +2,6 @@ pragma solidity ^0.5.6;
 
 
 /**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be aplied to your functions to restrict their use to
- * the owner.
- */
-contract Ownable {
-    address payable private _owner;
-
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor () internal {
-        _owner = msg.sender;
-        emit OwnershipTransferred(address(0), _owner);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view returns (address payable) {
-        return _owner;
-    }
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(isOwner(), "Ownable: caller is not the owner");
-        _;
-    }
-
-    /**
-     * @dev Returns true if the caller is the current owner.
-     */
-    function isOwner() public view returns (bool) {
-        return msg.sender == _owner;
-    }
-
-    /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * > Note: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
-    function renounceOwnership() public onlyOwner {
-        emit OwnershipTransferred(_owner, address(0));
-        _owner = address(0);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address payable newOwner) public onlyOwner {
-        _transferOwnership(newOwner);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     */
-    function _transferOwnership(address payable newOwner) internal {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
-    }
-}
-
-/**
  * @dev Interface of the KIP-13 standard, as defined in the
  * [KIP-13](http://kips.klaytn.com/KIPs/kip-13-interface_query_standard).
  *
@@ -94,123 +20,6 @@ interface IKIP13 {
      * This function call must use less than 30 000 gas.
      */
     function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-
-/**
- * @dev Interface of the KIP7 standard as defined in the KIP. Does not include
- * the optional functions; to access them see `KIP7Metadata`.
- * See http://kips.klaytn.com/KIPs/kip-7-fungible_token
- */
-contract IKIP7 is IKIP13 {
-    /**
-     * @dev Returns the amount of tokens in existence.
-     */
-    function totalSupply() external view returns (uint256);
-
-    /**
-     * @dev Returns the amount of tokens owned by `account`.
-     */
-    function balanceOf(address account) external view returns (uint256);
-
-    /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a `Transfer` event.
-     */
-    function transfer(address recipient, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Returns the remaining number of tokens that `spender` will be
-     * allowed to spend on behalf of `owner` through `transferFrom`. This is
-     * zero by default.
-     *
-     * This value changes when `approve` or `transferFrom` are called.
-     */
-    function allowance(address owner, address spender) external view returns (uint256);
-
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * > Beware that changing an allowance with this method brings the risk
-     * that someone may use both the old and the new allowance by unfortunate
-     * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
-     * desired value afterwards:
-     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     *
-     * Emits an `Approval` event.
-     */
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
-     * allowance.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a `Transfer` event.
-     */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-
-    /**
-    * @dev Moves `amount` tokens from the caller's account to `recipient`.
-    */
-    function safeTransfer(address recipient, uint256 amount, bytes memory data) public;
-
-    /**
-    * @dev  Moves `amount` tokens from the caller's account to `recipient`.
-    */
-    function safeTransfer(address recipient, uint256 amount) public;
-
-    /**
-    * @dev Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
-    * `amount` is then deducted from the caller's allowance.
-    */
-    function safeTransferFrom(address sender, address recipient, uint256 amount, bytes memory data) public;
-
-    /**
-    * @dev Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
-    * `amount` is then deducted from the caller's allowance.
-    */
-    function safeTransferFrom(address sender, address recipient, uint256 amount) public;
-
-    /**
-     * @dev Emitted when `value` tokens are moved from one account (`from`) to
-     * another (`to`).
-     *
-     * Note that `value` may be zero.
-     */
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    /**
-     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
-     * a call to `approve`. `value` is the new allowance.
-     */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-}
-
-interface IMix {
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
-    
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    
-    function mint(address to, uint256 amount) external;
-    function burn(uint256 amount) external;
-    function burnFrom(address account, uint256 amount) external;
 }
 
 /**
@@ -1199,6 +1008,1056 @@ contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata {
 }
 
 /**
+ * @dev Contract module which provides a basic access control mechanism, where
+ * there is an account (an owner) that can be granted exclusive access to
+ * specific functions.
+ *
+ * This module is used through inheritance. It will make available the modifier
+ * `onlyOwner`, which can be aplied to your functions to restrict their use to
+ * the owner.
+ */
+contract Ownable {
+    address payable private _owner;
+
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /**
+     * @dev Initializes the contract setting the deployer as the initial owner.
+     */
+    constructor () internal {
+        _owner = msg.sender;
+        emit OwnershipTransferred(address(0), _owner);
+    }
+
+    /**
+     * @dev Returns the address of the current owner.
+     */
+    function owner() public view returns (address payable) {
+        return _owner;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(isOwner(), "Ownable: caller is not the owner");
+        _;
+    }
+
+    /**
+     * @dev Returns true if the caller is the current owner.
+     */
+    function isOwner() public view returns (bool) {
+        return msg.sender == _owner;
+    }
+
+    /**
+     * @dev Leaves the contract without owner. It will not be possible to call
+     * `onlyOwner` functions anymore. Can only be called by the current owner.
+     *
+     * > Note: Renouncing ownership will leave the contract without an owner,
+     * thereby removing any functionality that is only available to the owner.
+     */
+    function renounceOwnership() public onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
+
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Can only be called by the current owner.
+     */
+    function transferOwnership(address payable newOwner) public onlyOwner {
+        _transferOwnership(newOwner);
+    }
+
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     */
+    function _transferOwnership(address payable newOwner) internal {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        emit OwnershipTransferred(_owner, newOwner);
+        _owner = newOwner;
+    }
+}
+
+/**
+ * @dev Interface of the KIP7 standard as defined in the KIP. Does not include
+ * the optional functions; to access them see `KIP7Metadata`.
+ * See http://kips.klaytn.com/KIPs/kip-7-fungible_token
+ */
+contract IKIP7 is IKIP13 {
+    /**
+     * @dev Returns the amount of tokens in existence.
+     */
+    function totalSupply() external view returns (uint256);
+
+    /**
+     * @dev Returns the amount of tokens owned by `account`.
+     */
+    function balanceOf(address account) external view returns (uint256);
+
+    /**
+     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a `Transfer` event.
+     */
+    function transfer(address recipient, uint256 amount) external returns (bool);
+
+    /**
+     * @dev Returns the remaining number of tokens that `spender` will be
+     * allowed to spend on behalf of `owner` through `transferFrom`. This is
+     * zero by default.
+     *
+     * This value changes when `approve` or `transferFrom` are called.
+     */
+    function allowance(address owner, address spender) external view returns (uint256);
+
+    /**
+     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * > Beware that changing an allowance with this method brings the risk
+     * that someone may use both the old and the new allowance by unfortunate
+     * transaction ordering. One possible solution to mitigate this race
+     * condition is to first reduce the spender's allowance to 0 and set the
+     * desired value afterwards:
+     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+     *
+     * Emits an `Approval` event.
+     */
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    /**
+     * @dev Moves `amount` tokens from `sender` to `recipient` using the
+     * allowance mechanism. `amount` is then deducted from the caller's
+     * allowance.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a `Transfer` event.
+     */
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+
+    /**
+    * @dev Moves `amount` tokens from the caller's account to `recipient`.
+    */
+    function safeTransfer(address recipient, uint256 amount, bytes memory data) public;
+
+    /**
+    * @dev  Moves `amount` tokens from the caller's account to `recipient`.
+    */
+    function safeTransfer(address recipient, uint256 amount) public;
+
+    /**
+    * @dev Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
+    * `amount` is then deducted from the caller's allowance.
+    */
+    function safeTransferFrom(address sender, address recipient, uint256 amount, bytes memory data) public;
+
+    /**
+    * @dev Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
+    * `amount` is then deducted from the caller's allowance.
+    */
+    function safeTransferFrom(address sender, address recipient, uint256 amount) public;
+
+    /**
+     * @dev Emitted when `value` tokens are moved from one account (`from`) to
+     * another (`to`).
+     *
+     * Note that `value` may be zero.
+     */
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    /**
+     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
+     * a call to `approve`. `value` is the new allowance.
+     */
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+interface IMix {
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    
+    function mint(address to, uint256 amount) external;
+    function burn(uint256 amount) external;
+    function burnFrom(address account, uint256 amount) external;
+}
+
+// SPDX-License-Identifier: MIT
+/**
+ * @dev Required interface of an KIP37 compliant contract, as defined in the
+ * https://kips.klaytn.com/KIPs/kip-37
+ */
+contract IKIP37 is IKIP13 {
+    /**
+     * @dev Emitted when `value` tokens of token type `id` are transfered from `from` to `to` by `operator`.
+     */
+    event TransferSingle(
+        address indexed operator,
+        address indexed from,
+        address indexed to,
+        uint256 id,
+        uint256 value
+    );
+
+    /**
+     * @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
+     * transfers.
+     */
+    event TransferBatch(
+        address indexed operator,
+        address indexed from,
+        address indexed to,
+        uint256[] ids,
+        uint256[] values
+    );
+
+    /**
+     * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
+     * `approved`.
+     */
+    event ApprovalForAll(
+        address indexed account,
+        address indexed operator,
+        bool approved
+    );
+
+    /**
+     * @dev Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
+     */
+    event URI(string value, uint256 indexed id);
+
+    /**
+     * @dev Returns the amount of tokens of token type `id` owned by `account`.
+     *
+     * Requirements:
+     *
+     * - `account` cannot be the zero address.
+     */
+    function balanceOf(address account, uint256 id)
+        external
+        view
+        returns (uint256);
+
+    /**
+     * @dev Batch-operations version of {balanceOf}.
+     *
+     * Requirements:
+     *
+     * - `accounts` and `ids` must have the same length.
+     */
+    function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids)
+        external
+        view
+        returns (uint256[] memory);
+
+    /**
+     * @dev Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
+     *
+     * Emits an {ApprovalForAll} event.
+     *
+     * Requirements:
+     *
+     * - `operator` cannot be the caller.
+     */
+    function setApprovalForAll(address operator, bool approved) external;
+
+    /**
+     * @dev Returns true if `operator` is approved to transfer ``account``'s tokens.
+     *
+     * See {setApprovalForAll}.
+     */
+    function isApprovedForAll(address account, address operator)
+        external
+        view
+        returns (bool);
+
+    /**
+     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
+     *
+     * Emits a {TransferSingle} event.
+     *
+     * Requirements:
+     *
+     * - `to` cannot be the zero address.
+     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
+     * - `from` must have a balance of tokens of type `id` of at least `amount`.
+     * - If `to` refers to a smart contract, it must implement {IKIP37Receiver-onKIP37Received} and return the
+     * acceptance magic value.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes calldata data
+    ) external;
+
+    /**
+     * @dev Batch-operations version of {safeTransferFrom}.
+     *
+     * Emits a {TransferBatch} event.
+     *
+     * Requirements:
+     *
+     * - `ids` and `amounts` must have the same length.
+     * - If `to` refers to a smart contract, it must implement {IKIP37Receiver-onKIP37BatchReceived} and return the
+     * acceptance magic value.
+     */
+    function safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] calldata ids,
+        uint256[] calldata amounts,
+        bytes calldata data
+    ) external;
+}
+
+// SPDX-License-Identifier: MIT
+/**
+ * @dev Interface of the optional KIP37MetadataExtension interface
+ */
+contract IKIP37MetadataURI is IKIP37 {
+    /**
+     * @dev Returns the URI for token type `id`.
+     *
+     * If the `\{id\}` substring is present in the URI, it must be replaced by
+     * clients with the actual token type ID.
+     */
+    function uri(uint256 id) external view returns (string memory);
+}
+
+// SPDX-License-Identifier: MIT
+contract IKIP37Receiver is IKIP13 {
+    /**
+        @dev Handles the receipt of a single KIP37 token type. This function is
+        called at the end of a `safeTransferFrom` after the balance has been updated.
+        To accept the transfer, this must return
+        `bytes4(keccak256("onKIP37Received(address,address,uint256,uint256,bytes)"))`
+        (i.e. 0xe78b3325, or its own function selector).
+        @param operator The address which initiated the transfer (i.e. msg.sender)
+        @param from The address which previously owned the token
+        @param id The ID of the token being transferred
+        @param value The amount of tokens being transferred
+        @param data Additional data with no specified format
+        @return `bytes4(keccak256("onKIP37Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
+    */
+    function onKIP37Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external returns (bytes4);
+
+    /**
+        @dev Handles the receipt of a multiple KIP37 token types. This function
+        is called at the end of a `safeBatchTransferFrom` after the balances have
+        been updated. To accept the transfer(s), this must return
+        `bytes4(keccak256("onKIP37BatchReceived(address,address,uint256[],uint256[],bytes)"))`
+        (i.e. 0x9b49e332, or its own function selector).
+        @param operator The address which initiated the batch transfer (i.e. msg.sender)
+        @param from The address which previously owned the token
+        @param ids An array containing ids of each token being transferred (order and length must match values array)
+        @param values An array containing amounts of each token being transferred (order and length must match ids array)
+        @param data Additional data with no specified format
+        @return `bytes4(keccak256("onKIP37BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
+    */
+    function onKIP37BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external returns (bytes4);
+}
+
+// SPDX-License-Identifier: MIT
+contract IERC1155Receiver is IKIP13 {
+    /**
+        @dev Handles the receipt of a single ERC1155 token type. This function is
+        called at the end of a `safeTransferFrom` after the balance has been updated.
+        To accept the transfer, this must return
+        `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))`
+        (i.e. 0xf23a6e61, or its own function selector).
+        @param operator The address which initiated the transfer (i.e. msg.sender)
+        @param from The address which previously owned the token
+        @param id The ID of the token being transferred
+        @param value The amount of tokens being transferred
+        @param data Additional data with no specified format
+        @return `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
+    */
+    function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external returns (bytes4);
+
+    /**
+        @dev Handles the receipt of a multiple ERC1155 token types. This function
+        is called at the end of a `safeBatchTransferFrom` after the balances have
+        been updated. To accept the transfer(s), this must return
+        `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))`
+        (i.e. 0xbc197c81, or its own function selector).
+        @param operator The address which initiated the batch transfer (i.e. msg.sender)
+        @param from The address which previously owned the token
+        @param ids An array containing ids of each token being transferred (order and length must match values array)
+        @param values An array containing amounts of each token being transferred (order and length must match ids array)
+        @param data Additional data with no specified format
+        @return `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
+    */
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external returns (bytes4);
+}
+
+/*
+ * @dev Provides information about the current execution context, including the
+ * sender of the transaction and its data. While these are generally available
+ * via msg.sender and msg.data, they should not be accessed in such a direct
+ * manner, since when dealing with GSN meta-transactions the account sending and
+ * paying for execution may not be the actual sender (as far as an application
+ * is concerned).
+ *
+ * This contract is only required for intermediate, library-like contracts.
+ */
+contract Context {
+    // Empty internal constructor, to prevent people from mistakenly deploying
+    // an instance of this contract, which should be used via inheritance.
+    constructor () internal { }
+    // solhint-disable-previous-line no-empty-blocks
+
+    function _msgSender() internal view returns (address payable) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view returns (bytes memory) {
+        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        return msg.data;
+    }
+}
+
+// SPDX-License-Identifier: MIT
+/**
+ *
+ * @dev Implementation of the basic standard multi-token.
+ * Originally based on code by Enjin: https://github.com/enjin/erc-1155
+ */
+contract KIP37 is Context, KIP13, IKIP37, IKIP37MetadataURI {
+    using SafeMath for uint256;
+    using Address for address;
+
+    // Mapping from token ID to account balances
+    mapping(uint256 => mapping(address => uint256)) private _balances;
+
+    // Mapping from account to operator approvals
+    mapping(address => mapping(address => bool)) private _operatorApprovals;
+
+    // Mapping from token ID to the total supply of the token
+    mapping(uint256 => uint256) private _totalSupply;
+
+    // Used as the URI for all token types by relying on ID substition, e.g. https://token-cdn-domain/{id}.json
+    string internal _uri;
+
+    /*
+     *     bytes4(keccak256('balanceOf(address,uint256)')) == 0x00fdd58e
+     *     bytes4(keccak256('balanceOfBatch(address[],uint256[])')) == 0x4e1273f4
+     *     bytes4(keccak256('setApprovalForAll(address,bool)')) == 0xa22cb465
+     *     bytes4(keccak256('isApprovedForAll(address,address)')) == 0xe985e9c5
+     *     bytes4(keccak256('safeTransferFrom(address,address,uint256,uint256,bytes)')) == 0xf242432a
+     *     bytes4(keccak256('safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)')) == 0x2eb2c2d6
+     *     bytes4(keccak256('totalSupply(uint256)')) == 0xbd85b039
+     *
+     *     => 0x00fdd58e ^ 0x4e1273f4 ^ 0xa22cb465 ^
+     *        0xe985e9c5 ^ 0xf242432a ^ 0x2eb2c2d6 ^ 0xbd85b039 == 0x6433ca1f
+     */
+    bytes4 private constant _INTERFACE_ID_KIP37 = 0x6433ca1f;
+
+    /*
+     *     bytes4(keccak256('uri(uint256)')) == 0x0e89341c
+     */
+    bytes4 private constant _INTERFACE_ID_KIP37_METADATA_URI = 0x0e89341c;
+
+    bytes4 private constant _INTERFACE_ID_KIP37_TOKEN_RECEIVER = 0x7cc2d017;
+
+    bytes4 private constant _INTERFACE_ID_ERC1155_TOKEN_RECEIVER = 0x4e2312e0;
+
+    // Equals to `bytes4(keccak256("onKIP37Received(address,address,uint256,uint256,bytes)"))`
+    // which can be also obtained as `IKIP37Receiver(0).onKIP37Received.selector`
+    bytes4 private constant _KIP37_RECEIVED = 0xe78b3325;
+
+    // Equals to `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))`
+    // which can be also obtained as `IERC1155Receiver(0).onERC1155Received.selector`
+    bytes4 private constant _ERC1155_RECEIVED = 0xf23a6e61;
+
+    // Equals to `bytes4(keccak256("onKIP37BatchReceived(address,address,uint256[],uint256[],bytes)"))`
+    // which can be also obtained as `IKIP37Receiver(0).onKIP37BatchReceived.selector`
+    bytes4 private constant _KIP37_BATCH_RECEIVED = 0x9b49e332;
+
+    // Equals to `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))`
+    // which can be also obtained as `IERC1155Receiver(0).onERC1155BatchReceived.selector`
+    bytes4 private constant _ERC1155_BATCH_RECEIVED = 0xbc197c81;
+
+    /**
+     * @dev See {_setURI}.
+     */
+    constructor(string memory uri) public {
+        _setURI(uri);
+
+        // register the supported interfaces to conform to KIP37 via KIP13
+        _registerInterface(_INTERFACE_ID_KIP37);
+
+        // register the supported interfaces to conform to KIP37MetadataURI via KIP13
+        _registerInterface(_INTERFACE_ID_KIP37_METADATA_URI);
+    }
+
+    /**
+     * @dev See {IKIP37MetadataURI-uri}.
+     *
+     * This implementation returns the same URI for *all* token types. It relies
+     * on the token type ID substituion mechanism
+     * http://kips.klaytn.com/KIPs/kip-37#metadata
+     *
+     * Clients calling this function must replace the `\{id\}` substring with the
+     * actual token type ID.
+     */
+    function uri(uint256) external view returns (string memory) {
+        return _uri;
+    }
+
+    /**
+     * @dev See {IKIP37-balanceOf}.
+     *
+     * Requirements:
+     *
+     * - `account` cannot be the zero address.
+     */
+    function balanceOf(address account, uint256 id)
+        public
+        view
+        returns (uint256)
+    {
+        require(
+            account != address(0),
+            "KIP37: balance query for the zero address"
+        );
+        return _balances[id][account];
+    }
+
+    /**
+     * @dev See {IKIP37-balanceOfBatch}.
+     *
+     * Requirements:
+     *
+     * - `accounts` and `ids` must have the same length.
+     */
+    function balanceOfBatch(address[] memory accounts, uint256[] memory ids)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        require(
+            accounts.length == ids.length,
+            "KIP37: accounts and ids length mismatch"
+        );
+
+        uint256[] memory batchBalances = new uint256[](accounts.length);
+
+        for (uint256 i = 0; i < accounts.length; ++i) {
+            require(
+                accounts[i] != address(0),
+                "KIP37: batch balance query for the zero address"
+            );
+            batchBalances[i] = _balances[ids[i]][accounts[i]];
+        }
+
+        return batchBalances;
+    }
+
+    /**
+     * @dev See {IKIP37-setApprovalForAll}.
+     */
+    function setApprovalForAll(address operator, bool approved) public {
+        require(
+            _msgSender() != operator,
+            "KIP37: setting approval status for self"
+        );
+
+        _operatorApprovals[_msgSender()][operator] = approved;
+        emit ApprovalForAll(_msgSender(), operator, approved);
+    }
+
+    /**
+     * @dev See {IKIP37-isApprovedForAll}.
+     */
+    function isApprovedForAll(address account, address operator)
+        public
+        view
+        returns (bool)
+    {
+        return _operatorApprovals[account][operator];
+    }
+
+    function totalSupply(uint256 _tokenId) public view returns (uint256) {
+        return _totalSupply[_tokenId];
+    }
+
+    /**
+     * @dev See {IKIP37-safeTransferFrom}.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public {
+        require(to != address(0), "KIP37: transfer to the zero address");
+        require(
+            from == _msgSender() || isApprovedForAll(from, _msgSender()),
+            "KIP37: caller is not owner nor approved"
+        );
+
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(
+            operator,
+            from,
+            to,
+            _asSingletonArray(id),
+            _asSingletonArray(amount),
+            data
+        );
+
+        _balances[id][from] = _balances[id][from].sub(
+            amount,
+            "KIP37: insufficient balance for transfer"
+        );
+        _balances[id][to] = _balances[id][to].add(amount);
+
+        emit TransferSingle(operator, from, to, id, amount);
+
+        require(
+            _doSafeTransferAcceptanceCheck(
+                operator,
+                from,
+                to,
+                id,
+                amount,
+                data
+            ),
+            "KIP37: transfer to non KIP37Receiver implementer"
+        );
+    }
+
+    /**
+     * @dev See {IKIP37-safeBatchTransferFrom}.
+     */
+    function safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) public {
+        require(
+            ids.length == amounts.length,
+            "KIP37: ids and amounts length mismatch"
+        );
+        require(to != address(0), "KIP37: transfer to the zero address");
+        require(
+            from == _msgSender() || isApprovedForAll(from, _msgSender()),
+            "KIP37: transfer caller is not owner nor approved"
+        );
+
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(operator, from, to, ids, amounts, data);
+
+        for (uint256 i = 0; i < ids.length; ++i) {
+            uint256 id = ids[i];
+            uint256 amount = amounts[i];
+
+            _balances[id][from] = _balances[id][from].sub(
+                amount,
+                "KIP37: insufficient balance for transfer"
+            );
+            _balances[id][to] = _balances[id][to].add(amount);
+        }
+
+        emit TransferBatch(operator, from, to, ids, amounts);
+
+        require(
+            _doSafeBatchTransferAcceptanceCheck(
+                operator,
+                from,
+                to,
+                ids,
+                amounts,
+                data
+            ),
+            "KIP37: batch transfer to non KIP37Receiver implementer"
+        );
+    }
+
+    /**
+     * @dev Sets a new URI for all token types, by relying on the token type ID
+     * substituion mechanism
+     * http://kips.klaytn.com/KIPs/kip-37#metadata.
+     *
+     * By this mechanism, any occurence of the `\{id\}` substring in either the
+     * URI or any of the amounts in the JSON file at said URI will be replaced by
+     * clients with the token type ID.
+     *
+     * For example, the `https://token-cdn-domain/\{id\}.json` URI would be
+     * interpreted by clients as
+     * `https://token-cdn-domain/000000000000000000000000000000000000000000000000000000000004cce0.json`
+     * for token type ID 0x4cce0.
+     *
+     * See {uri}.
+     *
+     * Because these URIs cannot be meaningfully represented by the {URI} event,
+     * this function emits no events.
+     */
+    function _setURI(string memory newuri) internal {
+        _uri = newuri;
+    }
+
+    /**
+     * @dev Creates `amount` tokens of token type `id`, and assigns them to `account`.
+     *
+     * Emits a {TransferSingle} event.
+     *
+     * Requirements:
+     *
+     * - `account` cannot be the zero address.
+     * - If `to` refers to a smart contract, it must implement {IKIP37Receiver-onKIP37Received} and return the
+     * acceptance magic value.
+     */
+    function _mint(
+        address account,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) internal {
+        require(account != address(0), "KIP37: mint to the zero address");
+
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(
+            operator,
+            address(0),
+            account,
+            _asSingletonArray(id),
+            _asSingletonArray(amount),
+            data
+        );
+
+        _balances[id][account] = _balances[id][account].add(amount);
+        _totalSupply[id] = _totalSupply[id].add(amount);
+        emit TransferSingle(operator, address(0), account, id, amount);
+
+        require(
+            _doSafeTransferAcceptanceCheck(
+                operator,
+                address(0),
+                account,
+                id,
+                amount,
+                data
+            ),
+            "KIP37: transfer to non KIP37Receiver implementer"
+        );
+    }
+
+    /**
+     * @dev Batch-operations version of {_mint}.
+     *
+     * Requirements:
+     *
+     * - `ids` and `amounts` must have the same length.
+     * - If `to` refers to a smart contract, it must implement {IKIP37Receiver-onKIP37BatchReceived} and return the
+     * acceptance magic value.
+     */
+    function _mintBatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal {
+        require(to != address(0), "KIP37: mint to the zero address");
+        require(
+            ids.length == amounts.length,
+            "KIP37: ids and amounts length mismatch"
+        );
+
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
+
+        for (uint256 i = 0; i < ids.length; i++) {
+            _balances[ids[i]][to] = amounts[i].add(_balances[ids[i]][to]);
+            _totalSupply[ids[i]] = amounts[i].add(_totalSupply[ids[i]]);
+        }
+
+        emit TransferBatch(operator, address(0), to, ids, amounts);
+
+        require(
+            _doSafeBatchTransferAcceptanceCheck(
+                operator,
+                address(0),
+                to,
+                ids,
+                amounts,
+                data
+            ),
+            "KIP37: batch transfer to non KIP37Receiver implementer"
+        );
+    }
+
+    /**
+     * @dev Destroys `amount` tokens of token type `id` from `account`
+     *
+     * Requirements:
+     *
+     * - `account` cannot be the zero address.
+     * - `account` must have at least `amount` tokens of token type `id`.
+     */
+    function _burn(
+        address account,
+        uint256 id,
+        uint256 amount
+    ) internal {
+        require(account != address(0), "KIP37: burn from the zero address");
+
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(
+            operator,
+            account,
+            address(0),
+            _asSingletonArray(id),
+            _asSingletonArray(amount),
+            ""
+        );
+
+        _balances[id][account] = _balances[id][account].sub(
+            amount,
+            "KIP37: burn amount exceeds balance"
+        );
+
+        _totalSupply[id] = _totalSupply[id].sub(
+            amount,
+            "KIP37: burn amount exceeds total supply"
+        );
+
+        emit TransferSingle(operator, account, address(0), id, amount);
+    }
+
+    /**
+     * @dev Batch-operations version of {_burn}.
+     *
+     * Requirements:
+     *
+     * - `ids` and `amounts` must have the same length.
+     */
+    function _burnBatch(
+        address account,
+        uint256[] memory ids,
+        uint256[] memory amounts
+    ) internal {
+        require(account != address(0), "KIP37: burn from the zero address");
+        require(
+            ids.length == amounts.length,
+            "KIP37: ids and amounts length mismatch"
+        );
+
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(operator, account, address(0), ids, amounts, "");
+
+        for (uint256 i = 0; i < ids.length; i++) {
+            _balances[ids[i]][account] = _balances[ids[i]][account].sub(
+                amounts[i],
+                "KIP37: burn amount exceeds balance"
+            );
+
+            _totalSupply[ids[i]] = _totalSupply[ids[i]].sub(
+                amounts[i],
+                "KIP37: burn amount exceeds total supply"
+            );
+        }
+
+        emit TransferBatch(operator, account, address(0), ids, amounts);
+    }
+
+    /**
+     * @dev Hook that is called before any token transfer. This includes minting
+     * and burning, as well as batched variants.
+     *
+     * The same hook is called on both single and batched variants. For single
+     * transfers, the length of the `id` and `amount` arrays will be 1.
+     *
+     * Calling conditions (for each `id` and `amount` pair):
+     *
+     * - When `from` and `to` are both non-zero, `amount` of ``from``'s tokens
+     * of token type `id` will be  transferred to `to`.
+     * - When `from` is zero, `amount` tokens of token type `id` will be minted
+     * for `to`.
+     * - when `to` is zero, `amount` of ``from``'s tokens of token type `id`
+     * will be burned.
+     * - `from` and `to` are never both zero.
+     * - `ids` and `amounts` have the same, non-zero length.
+     *
+     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     */
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal {}
+
+    function _doSafeTransferAcceptanceCheck(
+        address operator,
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) private returns (bool) {
+        bool success;
+        bytes memory returndata;
+
+        if (!to.isContract()) {
+            return true;
+        }
+
+        (success, returndata) = to.call(
+            abi.encodeWithSelector(
+                _ERC1155_RECEIVED,
+                operator,
+                from,
+                id,
+                amount,
+                data
+            )
+        );
+        if (
+            returndata.length != 0 &&
+            abi.decode(returndata, (bytes4)) == _ERC1155_RECEIVED
+        ) {
+            return true;
+        }
+
+        (success, returndata) = to.call(
+            abi.encodeWithSelector(
+                _KIP37_RECEIVED,
+                operator,
+                from,
+                id,
+                amount,
+                data
+            )
+        );
+        if (
+            returndata.length != 0 &&
+            abi.decode(returndata, (bytes4)) == _KIP37_RECEIVED
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function _doSafeBatchTransferAcceptanceCheck(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) private returns (bool) {
+        bool success;
+        bytes memory returndata;
+
+        if (!to.isContract()) {
+            return true;
+        }
+
+        (success, returndata) = to.call(
+            abi.encodeWithSelector(
+                _ERC1155_BATCH_RECEIVED,
+                operator,
+                from,
+                ids,
+                amounts,
+                data
+            )
+        );
+        if (
+            returndata.length != 0 &&
+            abi.decode(returndata, (bytes4)) == _ERC1155_BATCH_RECEIVED
+        ) {
+            return true;
+        }
+
+        (success, returndata) = to.call(
+            abi.encodeWithSelector(
+                _KIP37_BATCH_RECEIVED,
+                operator,
+                from,
+                ids,
+                amounts,
+                data
+            )
+        );
+        if (
+            returndata.length != 0 &&
+            abi.decode(returndata, (bytes4)) == _KIP37_BATCH_RECEIVED
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function _asSingletonArray(uint256 element)
+        private
+        pure
+        returns (uint256[] memory)
+    {
+        uint256[] memory array = new uint256[](1);
+        array[0] = element;
+
+        return array;
+    }
+}
+
+/**
  * @title Roles
  * @dev Library for managing addresses assigned to a Role.
  */
@@ -1274,37 +2133,131 @@ contract MinterRole {
 }
 
 /**
- * @title KIP17Mintable
- * @dev KIP17 minting logic.
+ * @dev Extension of {KIP37} that allows token holders to destroy both their
+ * own tokens and those that they have been approved to use.
  */
-contract KIP17Mintable is KIP17, MinterRole {
+contract KIP37Mintable is KIP37, MinterRole {
     /*
-     *     bytes4(keccak256('isMinter(address)')) == 0xaa271e1a
-     *     bytes4(keccak256('addMinter(address)')) == 0x983b2d56
-     *     bytes4(keccak256('renounceMinter()')) == 0x98650275
-     *     bytes4(keccak256('mint(address,uint256)')) == 0x40c10f19
+     *     bytes4(keccak256('create(uint256,uint256,string)')) == 0x4b068c78
+     *     bytes4(keccak256('mint(uint256,address,uint256)')) == 0x836a1040
+     *     bytes4(keccak256('mint(uint256,address[],uint256[])')) == 0xcfa84fc1
+     *     bytes4(keccak256('mintBatch(address,uint256[],uint256[])')) == 0xd81d0a15
      *
-     *     => 0xaa271e1a ^ 0x983b2d56 ^ 0x98650275 ^ 0x40c10f19 == 0xeab83e20
+     *     => 0x4b068c78 ^ 0x836a1040 ^ 0xcfa84fc1 ^ 0xd81d0a15 == 0xdfd9d9ec
      */
-    bytes4 private constant _INTERFACE_ID_KIP17_MINTABLE = 0xeab83e20;
+    bytes4 private constant _INTERFACE_ID_KIP37_MINTABLE = 0xdfd9d9ec;
 
-    /**
-     * @dev Constructor function.
-     */
-    constructor () public {
-        // register the supported interface to conform to KIP17Mintable via KIP13
-        _registerInterface(_INTERFACE_ID_KIP17_MINTABLE);
+    // id => creators
+    mapping(uint256 => address) public creators;
+
+    mapping(uint256 => string) _uris;
+
+    constructor() public {
+        _registerInterface(_INTERFACE_ID_KIP37_MINTABLE);
+    }
+
+    function _exists(uint256 tokenId) internal view returns (bool) {
+        address creator = creators[tokenId];
+        return creator != address(0);
     }
 
     /**
-     * @dev Function to mint tokens.
-     * @param to The address that will receive the minted tokens.
-     * @param tokenId The token id to mint.
-     * @return A boolean that indicates if the operation was successful.
+     * @dev See {IKIP37MetadataURI-uri}.
+     *
+     * This implementation returns the same URI for *all* token types. It relies
+     * on the token type ID substituion mechanism
+     * http://kips.klaytn.com/KIPs/kip-37#metadata
+     *
+     * Clients calling this function must replace the `\{id\}` substring with the
+     * actual token type ID.
      */
-    function mint(address to, uint256 tokenId) public onlyMinter returns (bool) {
-        _mint(to, tokenId);
-        return true;
+    function uri(uint256 tokenId) external view returns (string memory) {
+        string memory customURI = string(_uris[tokenId]);
+        if(bytes(customURI).length != 0) {
+            return customURI;
+        }
+
+        return _uri;
+    }
+
+    /// @notice Creates a new token type and assigns _initialSupply to the minter.
+    /// @dev Throws if `msg.sender` is not allowed to create.
+    ///   Throws if the token id is already used.
+    /// @param _id The token id to create.
+    /// @param _initialSupply The amount of tokens being minted.
+    /// @param _uri The token URI of the created token.
+    /// @return A boolean that indicates if the operation was successful.
+    function create(
+        uint256 _id,
+        uint256 _initialSupply,
+        string memory _uri
+    ) public onlyMinter returns (bool) {
+        require(!_exists(_id), "KIP37: token already created");
+
+        creators[_id] = msg.sender;
+        _mint(msg.sender, _id, _initialSupply, "");
+
+        if (bytes(_uri).length > 0) {
+            _uris[_id] = _uri;
+            emit URI(_uri, _id);
+        }
+    }
+
+    /// @notice Mints tokens of the specific token type `_id` and assigns the tokens according to the variables `_to` and `_value`.
+    /// @dev Throws if `msg.sender` is not allowed to mint.
+    ///   MUST emit an event `TransferSingle`.
+    /// @param _id The token id to mint.
+    /// @param _to The address that will receive the minted tokens.
+    /// @param _value The quantity of tokens being minted.
+    function mint(
+        uint256 _id,
+        address _to,
+        uint256 _value
+    ) public onlyMinter {
+        require(_exists(_id), "KIP37: nonexistent token");
+        _mint(_to, _id, _value, "");
+    }
+
+    /// @notice Mints tokens of the specific token type `_id` in a batch and assigns the tokens according to the variables `_toList` and `_values`.
+    /// @dev Throws if `msg.sender` is not allowed to mint.
+    ///   MUST emit one or more `TransferSingle` events.
+    ///   MUST revert if the length of `_toList` is not the same as the length of `_values`.
+    /// @param _id The token id to mint.
+    /// @param _toList The list of addresses that will receive the minted tokens.
+    /// @param _values The list of quantities of tokens being minted.
+    function mint(
+        uint256 _id,
+        address[] memory _toList,
+        uint256[] memory _values
+    ) public onlyMinter {
+        require(_exists(_id), "KIP37: nonexistent token");
+        require(
+            _toList.length == _values.length,
+            "KIP37: toList and _values length mismatch"
+        );
+        for (uint256 i = 0; i < _toList.length; ++i) {
+            address to = _toList[i];
+            uint256 value = _values[i];
+            _mint(to, _id, value, "");
+        }
+    }
+
+    /// @notice Mints multiple KIP37 tokens of the specific token types `_ids` in a batch and assigns the tokens according to the variables `_to` and `_values`.
+    /// @dev Throws if `msg.sender` is not allowed to mint.
+    ///   MUST emit one or more `TransferSingle` events or a single `TransferBatch` event.
+    ///   MUST revert if the length of `_ids` is not the same as the length of `_values`.
+    /// @param _to The address that will receive the minted tokens.
+    /// @param _ids The list of the token ids to mint.
+    /// @param _values The list of quantities of tokens being minted.
+    function mintBatch(
+        address _to,
+        uint256[] memory _ids,
+        uint256[] memory _values
+    ) public onlyMinter {
+        for (uint256 i = 0; i < _ids.length; ++i) {
+            require(_exists(_ids[i]), "KIP37: nonexistent token");
+        }
+        _mintBatch(_to, _ids, _values, "");
     }
 }
 
@@ -1418,45 +2371,98 @@ contract Pausable is PauserRole {
     }
 }
 
+// SPDX-License-Identifier: MIT
 /**
- * @title KIP17 Non-Fungible Pausable token
- * @dev KIP17 modified with pausable transfers.
+ * @dev KIP37 token with pausable token transfers, minting and burning.
+ *
+ * Useful for scenarios such as preventing trades until the end of an evaluation
+ * period, or having an emergency switch for freezing all token transfers in the
+ * event of a large bug.
+ *
+ * _Available since v3.1._
  */
-contract KIP17Pausable is KIP13, KIP17, Pausable {
+contract KIP37Pausable is KIP37, Pausable {
+    mapping(uint256 => bool) private _tokenPaused;
+
     /*
-     *     bytes4(keccak256('paused()')) == 0x5c975abb
      *     bytes4(keccak256('pause()')) == 0x8456cb59
+     *     bytes4(keccak256('pause(uint256)')) == 0x136439dd
+     *     bytes4(keccak256('paused()')) == 0x5c975abb
+     *     bytes4(keccak256('paused(uint256)')) == 0x00dde10e
      *     bytes4(keccak256('unpause()')) == 0x3f4ba83a
-     *     bytes4(keccak256('isPauser(address)')) == 0x46fbf68e
-     *     bytes4(keccak256('addPauser(address)')) == 0x82dc1ec4
-     *     bytes4(keccak256('renouncePauser()')) == 0x6ef8d66d
+     *     bytes4(keccak256('unpause(uint256)')) == 0xfabc1cbc
      *
-     *     => 0x5c975abb ^ 0x8456cb59 ^ 0x3f4ba83a ^ 0x46fbf68e ^ 0x82dc1ec4 ^ 0x6ef8d66d == 0x4d5507ff
+     *     => 0x8456cb59 ^ 0x136439dd ^ 0x5c975abb ^
+     *        0x00dde10e ^ 0x3f4ba83a ^ 0xfabc1cbc == 0x0e8ffdb7
      */
-    bytes4 private constant _INTERFACE_ID_KIP17_PAUSABLE = 0x4d5507ff;
+    bytes4 private constant _INTERFACE_ID_KIP37_PAUSABLE = 0x0e8ffdb7;
+
+    constructor() public {
+        _registerInterface(_INTERFACE_ID_KIP37_PAUSABLE);
+    }
 
     /**
-     * @dev Constructor function.
+     * @dev Emitted when the pause is triggered by a pauser (`account`) with token ID.
      */
-    constructor () public {
-        // register the supported interface to conform to KIP17Pausable via KIP13
-        _registerInterface(_INTERFACE_ID_KIP17_PAUSABLE);
+    event Paused(uint256 tokenId, address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by a pauser (`account`) with token ID.
+     */
+    event Unpaused(uint256 tokenId, address account);
+
+    /// @notice Checks whether the specific token is paused.
+    /// @return True if the specific token is paused, false otherwise
+    function paused(uint256 _id) public view returns (bool) {
+        return _tokenPaused[_id];
     }
 
-    function approve(address to, uint256 tokenId) public whenNotPaused {
-        super.approve(to, tokenId);
+    /// @notice Pauses actions related to transfer and approval of the specific token.
+    /// @dev Throws if `msg.sender` is not allowed to pause.
+    ///   Throws if the specific token is paused.
+    function pause(uint256 _id) public onlyPauser {
+        require(_tokenPaused[_id] == false, "KIP37Pausable: already paused");
+        _tokenPaused[_id] = true;
+        emit Paused(_id, msg.sender);
     }
 
-    function setApprovalForAll(address to, bool approved) public whenNotPaused {
-        super.setApprovalForAll(to, approved);
+    /// @notice Resumes from the paused state of the specific token.
+    /// @dev Throws if `msg.sender` is not allowed to unpause.
+    ///   Throws if the specific token is not paused.
+    function unpause(uint256 _id) public onlyPauser {
+        require(_tokenPaused[_id] == true, "KIP37Pausable: already unpaused");
+        _tokenPaused[_id] = false;
+        emit Unpaused(_id, msg.sender);
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public whenNotPaused {
-        super.transferFrom(from, to, tokenId);
+    /**
+     * @dev See {KIP37-_beforeTokenTransfer}.
+     *
+     * Requirements:
+     *
+     * - the contract must not be paused.
+     */
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal {
+        require(!paused(), "KIP37Pausable: token transfer while paused");
+        for (uint256 i = 0; i < ids.length; i++) {
+            require(
+                _tokenPaused[ids[i]] == false,
+                "KIP37Pausable: the token is paused"
+            );
+        }
     }
 }
 
-contract CryptoCriminals77 is Ownable, KIP17Full("77 Crypto Criminals", "CC"), KIP17Mintable, KIP17Pausable {
+contract CryptoCriminals77 is Ownable, KIP37, KIP37Mintable, KIP37Pausable {
+
+    constructor() public KIP37("https://api.casesbykate.xyz/77cryptocriminals/{id}.json") {}
 
     event SetBaseURI(string baseURI);
 
@@ -1467,9 +2473,9 @@ contract CryptoCriminals77 is Ownable, KIP17Full("77 Crypto Criminals", "CC"), K
         emit SetBaseURI(_baseURI);
     }
 
-    function tokenURI(uint256 tokenId) public view returns (string memory) {
-        require(_exists(tokenId), "KIP17Metadata: URI query for nonexistent token");
-        
+    function uri(uint256 _tokenId) external view returns (string memory) {
+        uint256 tokenId = _tokenId;
+
         if (tokenId == 0) {
             return string(abi.encodePacked(baseURI, "0"));
         }
@@ -1492,15 +2498,13 @@ contract CryptoCriminals77 is Ownable, KIP17Full("77 Crypto Criminals", "CC"), K
 
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, idstr)) : "";
     }
-
-    function exists(uint256 tokenId) external view returns (bool) {
-        return _exists(tokenId);
-    }
 }
 
 contract CryptoCriminals77Minter is Ownable {
 
     CryptoCriminals77 public nft;
+    KIP17Full public cbk;
+
     IMix public mix;
     address public signer;
     uint256 public tryPrice = 1 * 1e18;
@@ -1509,8 +2513,9 @@ contract CryptoCriminals77Minter is Ownable {
     mapping(uint256 => bool) public usedCases;
     mapping(string => address) public triedKeys;
 
-    constructor(CryptoCriminals77 _nft, IMix _mix, address _signer) public {
+    constructor(CryptoCriminals77 _nft, KIP17Full _cbk, IMix _mix, address _signer) public {
         nft = _nft;
+        cbk = _cbk;
         mix = _mix;
         signer = _signer;
     }
@@ -1523,14 +2528,18 @@ contract CryptoCriminals77Minter is Ownable {
         tryPrice = _price;
     }
 
-    function tryMint(string calldata key) external {
+    function tryMint(string memory key, uint256[] memory _cases) public {
+        require(_cases.length == 7);
+        for (uint256 i = 0; i < 7; i += 1) {
+            require(usedCases[_cases[i]] != true);
+            require(cbk.ownerOf(_cases[i]) == msg.sender);
+        }
         triedKeys[key] = msg.sender;
         mix.burnFrom(msg.sender, tryPrice);
     }
 
     function mint(address to, uint256 id, uint256[] memory _cases, string memory key, bytes memory signature) public {
 
-        require(!nft.exists(id));
         require(_cases.length == 7);
         require(triedKeys[key] == to);
 
@@ -1566,9 +2575,10 @@ contract CryptoCriminals77Minter is Ownable {
 
         for (uint256 i = 0; i < 7; i += 1) {
             require(usedCases[_cases[i]] != true);
+            require(cbk.ownerOf(_cases[i]) == to);
             usedCases[_cases[i]] = true;
         }
 
-        nft.mint(to, id);
+        nft.mint(id, to, 1);
     }
 }
