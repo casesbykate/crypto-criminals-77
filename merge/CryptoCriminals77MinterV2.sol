@@ -2500,7 +2500,7 @@ contract CryptoCriminals77 is Ownable, KIP37, KIP37Mintable, KIP37Pausable {
     }
 }
 
-contract CryptoCriminals77Minter is Ownable {
+contract CryptoCriminals77MinterV2 is Ownable {
 
     CryptoCriminals77 public nft;
     KIP17Full public cbk;
@@ -2529,8 +2529,8 @@ contract CryptoCriminals77Minter is Ownable {
     }
 
     function tryMint(string memory key, uint256[] memory _cases) public {
-        require(_cases.length == 7);
-        for (uint256 i = 0; i < 7; i += 1) {
+        require(_cases.length == 2);
+        for (uint256 i = 0; i < 2; i += 1) {
             require(usedCases[_cases[i]] != true);
             require(cbk.ownerOf(_cases[i]) == msg.sender);
         }
@@ -2540,17 +2540,12 @@ contract CryptoCriminals77Minter is Ownable {
 
     function mint(address to, uint256 id, uint256[] memory _cases, string memory key, bytes memory signature) public {
 
-        require(_cases.length == 7);
+        require(_cases.length == 2);
         require(triedKeys[key] == to);
 
         bytes32 hash = keccak256(abi.encodePacked(to, id,
             _cases[0],
             _cases[1],
-            _cases[2],
-            _cases[3],
-            _cases[4],
-            _cases[5],
-            _cases[6],
             key
         ));
         bytes32 message = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
@@ -2573,7 +2568,7 @@ contract CryptoCriminals77Minter is Ownable {
 
         require(ecrecover(message, v, r, s) == signer);
 
-        for (uint256 i = 0; i < 7; i += 1) {
+        for (uint256 i = 0; i < 2; i += 1) {
             require(usedCases[_cases[i]] != true);
             require(cbk.ownerOf(_cases[i]) == to);
             usedCases[_cases[i]] = true;

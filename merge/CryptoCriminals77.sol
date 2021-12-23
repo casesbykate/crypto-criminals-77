@@ -1590,7 +1590,7 @@ contract Ownable {
 
 contract CryptoCriminals77 is Ownable, KIP37, KIP37Mintable, KIP37Pausable {
 
-    constructor() public KIP37("https://api.casesbykate.xyz/77cryptocriminals/{id}.json") {}
+    constructor() public KIP37("https://api.casesbykate.xyz/77cryptocriminals/{id}") {}
 
     event SetBaseURI(string baseURI);
 
